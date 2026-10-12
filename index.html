@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduPulse AI | AI-Powered Student Analytics & Success Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#3b82f6',
+              600: '#2563eb',
+              700: '#1d4ed8',
+              800: '#1e40af',
+              900: '#00338D', // KPMG Navy
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        
+        <!-- Logo & Hackathon Badge -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-900 to-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-lg text-slate-900 tracking-tight">EduPulse <span class="text-blue-600">AI</span></span>
+              <span class="text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-full uppercase tracking-wider">KPMG Challenge 04</span>
+            </div>
+            <p class="text-xs text-slate-500">St. Mary's Group of Institutions · CSE Cohort</p>
+          </div>
+        </div>
+
+        <!-- Role Selector & Engine Status -->
+        <div class="hidden md:flex items-center space-x-4">
+          <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs px-3 py-1.5 rounded-full font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-indicator"></span>
+            <span>Predictive ML: Active (Random Forest)</span>
+          </div>
+
+          <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-medium">
+            <button class="px-3 py-1 rounded-md bg-white shadow-sm text-slate-900 font-semibold">Advisor View</button>
+            <button class="px-3 py-1 rounded-md text-slate-600 hover:text-slate-900" onclick="alert('Dean & Management Macro Reporting is active below!')">Executive View</button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center space-x-3">
+          <button onclick="openSimulatorModal()" class="flex items-center space-x-1.5 px-3 py-2 bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition">
+            <i data-lucide="sliders" class="w-4 h-4"></i>
+            <span>What-If Simulator</span>
+          </button>
+          <button onclick="toggleCopilot()" class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-700 to-blue-600 text-white rounded-lg text-xs font-semibold hover:from-blue-800 hover:to-blue-700 shadow-md shadow-blue-600/20 transition">
+            <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+            <span>AI Copilot</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    
+    <!-- Executive KPI Ribbon -->
+    <section>
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Institutional Success Dashboard</h1>
+          <p class="text-sm text-slate-500">St. Mary's Group of Institutions · B.Tech CSE (Sections A, B & C)</p>
+        </div>
+        <div class="text-xs text-slate-400 flex items-center space-x-1">
+          <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+          <span>Updated Live · Semester Fall 2026</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- KPI 1 -->
+        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Enrolled</span>
+            <div class="w-9 h-9 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="kpi-total" class="text-3xl font-extrabold text-slate-900 tracking-tight">--</div>
+            <div class="mt-1 flex items-center text-xs text-slate-500">
+              <span class="text-emerald-600 font-semibold flex items-center mr-1">
+                <i data-lucide="trending-up" class="w-3 h-3 mr-0.5"></i> 100%
+              </span>
+              <span>Monitored in AI pipeline</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 2 -->
+        <div class="bg-white rounded-xl p-5 border border-rose-200 shadow-sm relative overflow-hidden bg-gradient-to-br from-white to-rose-50/40">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-rose-700 uppercase tracking-wider">Critical High Risk</span>
+            <div class="w-9 h-9 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="kpi-high-risk" class="text-3xl font-extrabold text-rose-600 tracking-tight">--</div>
+            <div class="mt-1 flex items-center text-xs text-slate-500">
+              <span id="kpi-high-risk-pct" class="text-rose-600 font-semibold mr-1">--%</span>
+              <span>Require immediate advisor outreach</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 3 -->
+        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Campus Attendance</span>
+            <div class="w-9 h-9 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+              <i data-lucide="calendar-check" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="kpi-attendance" class="text-3xl font-extrabold text-slate-900 tracking-tight">--%</div>
+            <div class="mt-1 flex items-center text-xs text-slate-500">
+              <span class="text-amber-600 font-semibold mr-1">Threshold: 75%</span>
+              <span>Regulatory UGC limit</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 4 -->
+        <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Average Campus GPA</span>
+            <div class="w-9 h-9 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+              <i data-lucide="award" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div class="mt-3">
+            <div id="kpi-gpa" class="text-3xl font-extrabold text-slate-900 tracking-tight">--</div>
+            <div class="mt-1 flex items-center text-xs text-slate-500">
+              <span class="text-emerald-600 font-semibold mr-1">10.0 Scale</span>
+              <span>Across 198 CSE Students</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Macro Analytics & Bottlenecks Section -->
+    <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      
+      <!-- Section Risk Distribution Chart -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm lg:col-span-2">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">CSE Sections Risk & Retention Distribution</h2>
+            <p class="text-xs text-slate-500">Comparative risk tiers across CSE Sections A, B & C</p>
+          </div>
+          <span class="text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded-md font-medium">B.Tech Batch 2025</span>
+        </div>
+        <div class="h-64">
+          <canvas id="deptChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Bottleneck Courses & Global XAI Factors -->
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <h2 class="text-base font-bold text-slate-900">Bottleneck Courses</h2>
+            <span class="text-[11px] font-semibold text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full">High Failure Risk</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-3">Courses with highest concentration of student struggle & absenteeism:</p>
+          <div id="bottlenecks-list" class="space-y-3">
+            <!-- Dynamically populated -->
+            <div class="text-xs text-slate-400">Loading bottleneck insights...</div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-semibold text-slate-700">Top Root-Cause Drivers (XAI)</span>
+            <span class="text-[10px] text-blue-600 font-medium">Model Feature Weights</span>
+          </div>
+          <div class="text-[11px] text-slate-600 space-y-1.5">
+            <div class="flex justify-between items-center">
+              <span>Attendance Rate Drop (&lt; 75%)</span>
+              <span class="font-bold text-slate-800">34.8% weight</span>
+            </div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-rose-500 h-full rounded-full" style="width: 35%"></div>
+            </div>
+            <div class="flex justify-between items-center pt-1">
+              <span>Midterm Examination Shortfall</span>
+              <span class="font-bold text-slate-800">26.2% weight</span>
+            </div>
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+              <div class="bg-amber-500 h-full rounded-full" style="width: 26%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Student Triage & Action Table Section -->
+    <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      
+      <!-- Table Header & Filters -->
+      <div class="p-5 border-b border-slate-200">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Student Success Triage Directory</h2>
+            <p class="text-xs text-slate-500">Filter students by risk level, attendance violations, and department for immediate outreach</p>
+          </div>
+
+          <!-- Search Input -->
+          <div class="relative w-full md:w-72">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-2.5"></i>
+            <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Search name, ID, or email..." class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+          </div>
+        </div>
+
+        <!-- Filter Chips Row -->
+        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
+          <span class="text-xs font-medium text-slate-400 mr-1">Risk Tier:</span>
+          <button onclick="setRiskFilter('All')" class="filter-btn text-xs px-3 py-1 rounded-full font-medium transition bg-slate-900 text-white" data-risk="All">All</button>
+          <button onclick="setRiskFilter('High')" class="filter-btn text-xs px-3 py-1 rounded-full font-medium transition bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200" data-risk="High">🚨 High Risk</button>
+          <button onclick="setRiskFilter('Medium')" class="filter-btn text-xs px-3 py-1 rounded-full font-medium transition bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200" data-risk="Medium">⚠️ Moderate</button>
+          <button onclick="setRiskFilter('Low')" class="filter-btn text-xs px-3 py-1 rounded-full font-medium transition bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200" data-risk="Low">✅ On Track</button>
+
+          <div class="h-4 w-px bg-slate-200 mx-2 hidden sm:block"></div>
+
+          <!-- Section filter dropdown -->
+          <select id="deptFilter" onchange="applyFilters()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1 text-slate-700 focus:outline-none">
+            <option value="All">All Sections</option>
+            <option value="CSE - Section A">CSE - Section A</option>
+            <option value="CSE - Section B">CSE - Section B</option>
+            <option value="CSE - Section C">CSE - Section C</option>
+          </select>
+
+          <!-- Attendance toggle checkbox -->
+          <label class="flex items-center space-x-1.5 text-xs text-slate-600 ml-auto cursor-pointer">
+            <input type="checkbox" id="lowAttCheck" onchange="applyFilters()" class="rounded text-blue-600 focus:ring-blue-500">
+            <span class="font-medium text-rose-600">Attendance &lt; 75% Only</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Table View -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 font-semibold uppercase tracking-wider border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">Student & ID</th>
+              <th class="py-3 px-4">Department & Year</th>
+              <th class="py-3 px-4">Current GPA</th>
+              <th class="py-3 px-4">Attendance</th>
+              <th class="py-3 px-4">LMS Engagement</th>
+              <th class="py-3 px-4">Risk Level</th>
+              <th class="py-3 px-4">Dropout Probability</th>
+              <th class="py-3 px-4 text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody" class="divide-y divide-slate-100">
+            <!-- Dynamically populated rows -->
+            <tr>
+              <td colspan="8" class="text-center py-8 text-slate-400">Loading student database...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Table Footer / Count -->
+      <div class="p-3 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <span id="matchedCount">Showing 0 students</span>
+        <span>Click <b>"Inspect 360°"</b> for Explainable AI root causes & Gemini-generated recovery plans</span>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Student 360° Detail Modal -->
+  <div id="studentModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-overlay">
+    <div class="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200 modal-content">
+      
+      <!-- Modal Header -->
+      <div class="p-6 border-b border-slate-200 bg-slate-50/70 flex items-start justify-between">
+        <div class="flex items-center space-x-4">
+          <div id="modalAvatar" class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-bold shadow-md">
+            RS
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h3 id="modalName" class="text-xl font-bold text-slate-900">Rahul Sharma</h3>
+              <span id="modalRiskBadge" class="text-xs px-2.5 py-0.5 rounded-full font-bold">High Risk</span>
+            </div>
+            <div class="text-xs text-slate-500 mt-1 flex flex-wrap gap-x-3">
+              <span id="modalId">ID: STU-2024-012</span>
+              <span>•</span>
+              <span id="modalDept">Computer Science</span>
+              <span>•</span>
+              <span id="modalSem">Semester 5</span>
+              <span>•</span>
+              <span id="modalEmail">rahul.sharma@institution.edu</span>
+            </div>
+          </div>
+        </div>
+        <button onclick="closeStudentModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6">
+        
+        <!-- XAI Explainable AI Diagnosis Banner -->
+        <div id="modalXaiBox" class="p-4 rounded-xl border border-rose-200 bg-rose-50/70">
+          <div class="flex items-center space-x-2 text-rose-800 font-bold text-sm mb-2">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-rose-600"></i>
+            <span>Explainable AI (XAI) Root Cause Diagnosis</span>
+          </div>
+          <p class="text-xs text-rose-700 mb-2">The predictive model identified the following primary drivers triggering risk status:</p>
+          <ul id="modalXaiList" class="list-disc list-inside text-xs text-rose-900 space-y-1 font-medium">
+            <!-- XAI factors -->
+          </ul>
+        </div>
+
+        <!-- Two Columns: Trajectory Chart & Current Courses -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <!-- GPA Trajectory Curve -->
+          <div class="p-4 rounded-xl border border-slate-200 bg-white">
+            <div class="flex items-center justify-between mb-2">
+              <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Multi-Semester GPA Trajectory</h4>
+              <span id="modalGpaDelta" class="text-xs font-bold text-rose-600">-1.4 pts drop</span>
+            </div>
+            <div class="h-44">
+              <canvas id="studentTrajectoryChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Key Metrics Grid -->
+          <div class="p-4 rounded-xl border border-slate-200 bg-white space-y-3">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">Academic & LMS Health Indicators</h4>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                <span class="text-slate-500 block">Lecture Attendance</span>
+                <span id="modalAttendance" class="text-base font-bold text-slate-900">--%</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                <span class="text-slate-500 block">Lab Attendance</span>
+                <span id="modalLabAttendance" class="text-base font-bold text-slate-900">--%</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                <span class="text-slate-500 block">Assignment Rate</span>
+                <span id="modalAssignmentRate" class="text-base font-bold text-slate-900">--%</span>
+              </div>
+              <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100">
+                <span class="text-slate-500 block">Weekly LMS Logins</span>
+                <span id="modalLmsLogins" class="text-base font-bold text-slate-900">-- visits</span>
+              </div>
+            </div>
+            <div class="p-2.5 bg-blue-50 rounded-lg border border-blue-100 flex items-center justify-between text-xs">
+              <span class="text-blue-900 font-medium">Sentiment & Wellbeing Pulse:</span>
+              <span id="modalWellbeing" class="font-bold text-blue-700">3 / 10 (Elevated Stress)</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Enrolled Courses Breakdown -->
+        <div>
+          <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">Enrolled Courses & Assessment Breakdown</h4>
+          <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-500 font-medium border-b border-slate-200">
+                <tr>
+                  <th class="py-2.5 px-3">Course Code & Name</th>
+                  <th class="py-2.5 px-3">Credits</th>
+                  <th class="py-2.5 px-3">Current Score</th>
+                  <th class="py-2.5 px-3">Attendance</th>
+                  <th class="py-2.5 px-3">Bottleneck Subject</th>
+                </tr>
+              </thead>
+              <tbody id="modalCourseTable" class="divide-y divide-slate-100">
+                <!-- Courses rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AI Intervention Plan Section -->
+        <div class="border-t border-slate-200 pt-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h4 class="text-sm font-bold text-slate-900 flex items-center space-x-1.5">
+                <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                <span>Generative AI Prescriptive Intervention Engine</span>
+              </h4>
+              <p class="text-xs text-slate-500">Synthesize tailored academic recovery roadmaps & personalized advisor outreach</p>
+            </div>
+            <button id="btnGeneratePlan" onclick="generateInterventionPlan()" class="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+              <i data-lucide="cpu" class="w-4 h-4"></i>
+              <span>Generate 4-Week AI Plan</span>
+            </button>
+          </div>
+
+          <!-- Plan Output Container -->
+          <div id="interventionOutput" class="hidden space-y-4">
+            <div class="p-4 bg-blue-50/70 border border-blue-200 rounded-xl">
+              <span class="text-xs font-bold text-blue-900 block mb-1">Diagnosis Summary</span>
+              <p id="planDiagnosis" class="text-xs text-blue-800"></p>
+            </div>
+
+            <!-- 4-Week Timeline -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="fourWeekGrid">
+              <!-- Populated by JS -->
+            </div>
+
+            <!-- Advisor Email Draft -->
+            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-900 flex items-center space-x-1">
+                  <i data-lucide="mail" class="w-3.5 h-3.5 text-slate-600"></i>
+                  <span>Ready-to-Send Advisor Outreach Draft</span>
+                </span>
+                <button onclick="copyEmailDraft()" class="text-[11px] text-blue-600 hover:text-blue-700 font-semibold flex items-center space-x-1">
+                  <i data-lucide="copy" class="w-3 h-3"></i>
+                  <span>Copy Email</span>
+                </button>
+              </div>
+              <textarea id="emailDraftText" readonly class="w-full h-32 p-3 text-xs bg-white border border-slate-200 rounded-lg font-mono text-slate-700 focus:outline-none"></textarea>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- What-If Simulator Modal -->
+  <div id="simulatorModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm modal-overlay">
+    <div class="bg-white rounded-2xl max-w-xl w-full p-6 shadow-2xl border border-slate-200 modal-content">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div class="flex items-center space-x-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <i data-lucide="sliders" class="w-5 h-5"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">What-If Risk Simulator</h3>
+            <p class="text-xs text-slate-500">Model how intervention metrics change student risk in real-time</p>
+          </div>
+        </div>
+        <button onclick="closeSimulatorModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="py-5 space-y-4">
+        <!-- Sliders -->
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Attendance Rate</span>
+            <span id="simAttVal" class="text-blue-600">62%</span>
+          </div>
+          <input type="range" id="simAtt" min="40" max="100" value="62" oninput="runSimulation()" class="w-full accent-blue-600">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Midterm Average Score</span>
+            <span id="simMidVal" class="text-blue-600">45%</span>
+          </div>
+          <input type="range" id="simMid" min="30" max="100" value="45" oninput="runSimulation()" class="w-full accent-blue-600">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Assignment Submission Rate</span>
+            <span id="simAssVal" class="text-blue-600">55%</span>
+          </div>
+          <input type="range" id="simAss" min="30" max="100" value="55" oninput="runSimulation()" class="w-full accent-blue-600">
+        </div>
+
+        <div>
+          <div class="flex justify-between text-xs font-semibold mb-1">
+            <span>Weekly LMS Logins</span>
+            <span id="simLogVal" class="text-blue-600">3 logins</span>
+          </div>
+          <input type="range" id="simLog" min="1" max="25" value="3" oninput="runSimulation()" class="w-full accent-blue-600">
+        </div>
+
+        <!-- Simulation Result Card -->
+        <div id="simResultBox" class="mt-4 p-4 rounded-xl border border-rose-200 bg-rose-50 flex items-center justify-between">
+          <div>
+            <span class="text-xs font-medium text-slate-600 block">Simulated Risk Outcome:</span>
+            <div class="flex items-center space-x-2 mt-0.5">
+              <span id="simLevel" class="text-lg font-bold text-rose-700">High Risk</span>
+              <span id="simProb" class="text-xs font-semibold text-rose-600">(78.2% Dropout Risk)</span>
+            </div>
+          </div>
+          <div id="simBadge" class="px-3 py-1 bg-rose-600 text-white text-xs font-bold rounded-lg shadow-sm">
+            Critical Action Needed
+          </div>
+        </div>
+
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 flex justify-end">
+        <button onclick="closeSimulatorModal()" class="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-semibold">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI Copilot Chat Drawer -->
+  <div id="copilotDrawer" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white shadow-2xl z-50 border-l border-slate-200 flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out">
+    <!-- Copilot Header -->
+    <div class="p-4 border-b border-slate-200 bg-slate-900 text-white flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+          <i data-lucide="sparkles" class="w-4 h-4 text-amber-300"></i>
+        </div>
+        <div>
+          <h3 class="text-sm font-bold">EduSense AI Copilot</h3>
+          <p class="text-[10px] text-slate-300">Natural Language Institutional Query</p>
+        </div>
+      </div>
+      <button onclick="toggleCopilot()" class="text-slate-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+    </div>
+
+    <!-- Suggested Quick Prompts -->
+    <div class="p-3 bg-slate-50 border-b border-slate-200 flex gap-1.5 overflow-x-auto text-[11px] whitespace-nowrap">
+      <button onclick="askCopilot('Show critical high risk students')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-full hover:bg-slate-100 font-medium text-slate-700">🚨 High Risk List</button>
+      <button onclick="askCopilot('Who has attendance below 75%?')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-full hover:bg-slate-100 font-medium text-slate-700">📉 Low Attendance</button>
+      <button onclick="askCopilot('What are the main bottleneck courses?')" class="px-2.5 py-1 bg-white border border-slate-200 rounded-full hover:bg-slate-100 font-medium text-slate-700">📚 Bottlenecks</button>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="copilotMessages" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <!-- Welcome message -->
+      <div class="p-3 bg-blue-50 text-blue-900 rounded-xl border border-blue-100 leading-relaxed">
+        👋 <b>Welcome!</b> I'm your institutional intelligence copilot. Ask me anything about student risk levels, department health, or academic bottlenecks.
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <form id="copilotForm" onsubmit="handleCopilotSubmit(event)" class="p-3 border-t border-slate-200 flex space-x-2">
+      <input type="text" id="copilotInput" placeholder="Ask a question..." class="flex-1 px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
+      <button type="submit" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold">
+        <i data-lucide="send" class="w-4 h-4"></i>
+      </button>
+    </form>
+  </div>
+
+  <!-- App JavaScript -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
